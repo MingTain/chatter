@@ -64,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _refresh() async {
     // TODO load msg
+    needRefresh = false;
     setState(() {
       name = 'Need refresh';
     });

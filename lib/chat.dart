@@ -33,6 +33,25 @@ class _ChatPageState extends State<ChatPage> {
     Message(Contact('Zhao'), 'OH, is good!', MessageType.text)
   ];
 
+  final TextEditingController _controller = TextEditingController();
+
+
+
+  _send() async {
+    setState(() {
+      messages.insert(0, Message(Contact('Yang'), _controller.text, MessageType.text));
+      _controller.clear();
+    });
+  }
+
+  VoidCallback _getSendAction() {
+    if (_controller.text.isEmpty) {
+      return null;
+    } else {
+      return _send();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +67,24 @@ class _ChatPageState extends State<ChatPage> {
                   (_, index) => MessageListItem(message: messages[index]),
               itemCount: messages.length,
             ),
-          )
+          ),
+          Divider(height: 8,),
+          TextField(
+            controller: _controller,
+            maxLines: null,
+            keyboardType: TextInputType.text,
+            textInputAction: TextInputAction.send,
+            onEditingComplete: _getSendAction,
+            autofocus: false,
+            decoration: InputDecoration(
+              hintText: 'Type something',
+              prefix: Padding(padding: EdgeInsets.only(left: 8)),
+              suffixIcon: IconButton(
+                onPressed: _getSendAction,
+                icon: Icon(IconData(0xe163, fontFamily: 'MaterialIcons', matchTextDirection: true)),
+              )
+            ),
+          ),
         ],
       ),
     );
@@ -63,8 +99,47 @@ class MessageListItem extends StatelessWidget {
   MessageListItem({Key key, @required this.message}):
         super(key: ObjectKey(message));
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMessageItemSend(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Flexible(
+            fit: FlexFit.tight,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(bottom: 4.0),
+                  child: Text(
+                    message.contact.name,
+                    style: TextStyle(fontSize: 12.0),
+                  ),
+                ),
+                Text(
+                  message.data,
+                  style: TextStyle(fontSize: 16.0),
+                )
+              ],
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: CircleAvatar(
+                radius: 22.0,
+                backgroundColor: Theme.of(context).primaryColor,
+                child: Text(
+                  message.contact.name[0],
+                )
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageItemReceived(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Row(
@@ -102,5 +177,14 @@ class MessageListItem extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (message.contact.name == 'Yang') {
+      return _buildMessageItemSend(context);
+    } else {
+      return _buildMessageItemReceived(context);
+    }
   }
 }
