@@ -33,23 +33,26 @@ class _ChatPageState extends State<ChatPage> {
     Message(Contact('Zhao'), 'OH, is good!', MessageType.text)
   ];
 
+  VoidCallback _sendAction;
+
   final TextEditingController _controller = TextEditingController();
 
-
-
-  _send() async {
+  _sendAsync() async {
     setState(() {
       messages.insert(0, Message(Contact('Yang'), _controller.text, MessageType.text));
       _controller.clear();
+      _sendAction = null;
     });
   }
 
-  VoidCallback _getSendAction() {
-    if (_controller.text.isEmpty) {
-      return null;
-    } else {
-      return _send();
-    }
+  _onTextChange(String text) {
+    setState(() {
+      if (text.isEmpty) {
+        _sendAction = null;
+      } else {
+        _sendAction = _sendAsync;
+      }
+    });
   }
 
   @override
@@ -68,23 +71,35 @@ class _ChatPageState extends State<ChatPage> {
               itemCount: messages.length,
             ),
           ),
-          Divider(height: 8,),
-          TextField(
-            controller: _controller,
-            maxLines: null,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.send,
-            onEditingComplete: _getSendAction,
-            autofocus: false,
-            decoration: InputDecoration(
-              hintText: 'Type something',
-              prefix: Padding(padding: EdgeInsets.only(left: 8)),
-              suffixIcon: IconButton(
-                onPressed: _getSendAction,
-                icon: Icon(IconData(0xe163, fontFamily: 'MaterialIcons', matchTextDirection: true)),
+          Divider(height: 1),
+          Row(
+            children: <Widget>[
+              Flexible(
+                child: TextField(
+                  controller: _controller,
+                  maxLines: null,
+                  onChanged: _onTextChange,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.send,
+                  onEditingComplete: _sendAction,
+                  autofocus: false,
+                  decoration: InputDecoration(
+                    hintText: 'Type something',
+                    prefix: Padding(padding: EdgeInsets.only(left: 8)),
+                  ),
+                ),
+              ),
+              IconButton(
+                onPressed: _sendAction,
+                color: Theme.of(context).accentColor,
+                disabledColor: Colors.black45,
+                icon: Icon(
+                  IconData(0xe163, fontFamily: 'MaterialIcons', matchTextDirection: true),
+                ),
               )
-            ),
-          ),
+            ],
+          )
+
         ],
       ),
     );
