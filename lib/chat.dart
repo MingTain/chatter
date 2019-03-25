@@ -84,6 +84,7 @@ class _ChatPageState extends State<ChatPage> {
                   onEditingComplete: _sendAction,
                   autofocus: false,
                   decoration: InputDecoration(
+                    border: InputBorder.none,
                     hintText: 'Type something',
                     prefix: Padding(padding: EdgeInsets.only(left: 8)),
                   ),

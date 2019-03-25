@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "640742919438",
+    "firebase_url": "https://chatter-71b61.firebaseio.com",
+    "project_id": "chatter-71b61",
+    "storage_bucket": "chatter-71b61.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:640742919438:android:df5a84f8c79316e1",
+        "android_client_info": {
+          "package_name": "net.siren93.chatter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "640742919438-bjrg04mgbhfp1veut4f5g03ofusd62f9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.siren93.chatter",
+            "certificate_hash": "2af7ca3e1161f3ba8d1dbe93558a152ae4ca97ae"
+          }
+        },
+        {
+          "client_id": "640742919438-97rlcol8vr4de7qbih47qp704ih2q4a1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgt8Tgxl3sDbutAgMZdJr-JUFkRiYUKL4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "640742919438-97rlcol8vr4de7qbih47qp704ih2q4a1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

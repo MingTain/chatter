@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'login.dart';
 import 'contact.dart';
-import 'package:flutter/rendering.dart';
+import 'constants.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() {
-//  debugPaintSizeEnabled = true;
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  static FirebaseAnalytics analytics = FirebaseAnalytics();
+  static FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(
+      analytics: analytics);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,6 +33,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      navigatorObservers: <NavigatorObserver>[observer],
       home: MyHomePage(title: 'Chatter')
     );
   }
@@ -51,15 +59,37 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   String name = '';
   bool needRefresh = false;
 
-  _login() async {
-    final result = await Navigator.push(
-        context, MaterialPageRoute<Map>(builder: (context) => LoginPage()));
-    setState(() {
-      name = result['name'];
-    });
+  @override
+  void initState() {
+    _initLogin();
+    super.initState();
+  }
+
+  _initLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int userId = prefs.getInt(PREF_KEY_USER_ID);
+    print("user id: $userId");
+    if (userId == null || userId == 0) {
+      final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth = await googleUser
+          .authentication;
+      final AuthCredential credential = GoogleAuthProvider.getCredential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      print("google id token: ${googleAuth.idToken}");
+
+      final FirebaseUser user = await _auth.signInWithCredential(credential);
+      print("signed in ${user.displayName}, id: ${googleUser.id}");
+      final idToken = await user.getIdToken();
+      print("id token: $idToken");
+    }
   }
 
   _refresh() async {
